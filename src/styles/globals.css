@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-b from-moon-pastel-900 via-moon-pastel-800 to-moon-pastel-900 text-gray-100 min-h-screen;
+  }
+}
+
+@layer components {
+  .prize-card {
+    @apply relative bg-moon-pastel-700 rounded-2xl p-4 transition-all duration-300 shadow-prize-card text-gray-100;
+  }
+
+  .prize-card:hover,
+  .prize-card:focus-within {
+    @apply shadow-prize-card-hover transform -translate-y-1.5 scale-[1.03] z-10;
+  }
+
+  .prize-card-rare {
+    @apply border-2 border-midautumn-gold-300;
+  }
+
+  .prize-card-epic {
+    @apply border-2 border-midautumn-gold-500;
+  }
+
+  .prize-card-legendary {
+    @apply border-2 border-midautumn-gold-400 relative overflow-hidden;
+  }
+
+  .legendary-shimmer {
+    @apply absolute inset-0 bg-gradient-to-r from-transparent via-midautumn-gold-200/30 to-transparent bg-[length:200%_100%] animate-shimmer pointer-events-none;
+  }
+
+  .prize-card-selected {
+    @apply ring-4 ring-midautumn-gold-500 scale-105 animate-glow-pulse;
+  }
+
+  .prize-card-selected::before {
+    content: "";
+    @apply absolute inset-0 bg-gradient-radial from-midautumn-gold-100/40 to-transparent rounded-2xl -z-10;
+  }
+
+  .modal-backdrop {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-2xl p-6 max-w-md w-full mx-4 shadow-lg z-50;
+  }
+
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200 transform active:scale-95;
+  }
+
+  .btn-primary {
+    @apply bg-midautumn-red-600 text-white hover:bg-midautumn-red-700;
+  }
+
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-800 hover:bg-gray-300;
+  }
+
+  .toast {
+    @apply fixed bottom-4 left-1/2 -translate-x-1/2 bg-midautumn-gold-50 text-midautumn-gold-900 px-4 py-3 rounded-lg shadow-lg z-50 flex items-center;
+    @apply border border-midautumn-gold-200;
+  }
+}

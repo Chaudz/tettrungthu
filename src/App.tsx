@@ -9,6 +9,12 @@ import ParticleBackground from "./components/ParticleBackground";
 import Moon from "./components/Moon";
 import Lantern from "./components/Lantern";
 import FallingLeaves from "./components/FallingLeaves";
+import CodeInput from "./components/CodeInput";
+import WonPrizesList from "./components/WonPrizesList";
+import Lion from "./components/Lion";
+import LanternDrum from "./components/LanternDrum";
+import MidAutumnDecoration from "./components/MidAutumnDecoration";
+import { usePrizeTracking } from "./hooks/usePrizeTracking";
 import { motion } from "framer-motion";
 
 function App() {
@@ -17,7 +23,10 @@ function App() {
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "wheel">("grid");
-  console.log(viewMode);
+
+  // Sử dụng hook quản lý mã code và giải thưởng
+  const { validateCode, hasValidCode, addWonPrize, currentCode, wonPrizes } =
+    usePrizeTracking();
 
   const handleSelectPrize = (prize: Prize) => {
     setSelectedPrize(prize);
@@ -36,6 +45,15 @@ function App() {
     }
   };
 
+  // Xử lý khi quay trúng giải thưởng
+  const handleSpin = (prize: Prize) => {
+    if (currentCode) {
+      addWonPrize(currentCode, prize);
+      setToastMessage(`Chúc mừng! Bạn đã trúng: ${prize.title}`);
+      setShowToast(true);
+    }
+  };
+
   const handleCloseToast = () => {
     setShowToast(false);
   };
@@ -43,7 +61,9 @@ function App() {
   return (
     <div className="min-h-screen pb-16 overflow-hidden">
       <ParticleBackground />
-      <Moon size={150} top="40px" right="40px" />
+      <Moon size={150} top="20px" right="20px" className="hidden sm:block" />
+      <Moon size={80} top="10px" right="10px" className="block sm:hidden" />
+      {/* Đèn lồng cho desktop */}
       <Lantern
         color="#f83b3b"
         size={16}
@@ -51,6 +71,7 @@ function App() {
         duration={3}
         left="5%"
         top="100px"
+        className="hidden md:block"
       />
       <Lantern
         color="#ffcf1a"
@@ -59,6 +80,7 @@ function App() {
         duration={4}
         left="15%"
         top="150px"
+        className="hidden md:block"
       />
       <Lantern
         color="#f83b3b"
@@ -67,6 +89,7 @@ function App() {
         duration={3.5}
         left="85%"
         top="120px"
+        className="hidden md:block"
       />
       <Lantern
         color="#ffcf1a"
@@ -75,8 +98,51 @@ function App() {
         duration={5}
         left="92%"
         top="180px"
+        className="hidden md:block"
+      />
+
+      {/* Đèn lồng cho mobile */}
+      <Lantern
+        color="#f83b3b"
+        size={10}
+        delay={0}
+        duration={3}
+        left="2%"
+        top="80px"
+        className="block md:hidden"
+      />
+      <Lantern
+        color="#ffcf1a"
+        size={8}
+        delay={1.5}
+        duration={4}
+        left="92%"
+        top="100px"
+        className="block md:hidden"
       />
       <FallingLeaves />
+
+      {/* Thêm trang trí lân */}
+      <Lion position="left" size="medium" className="hidden md:block" />
+      <Lion position="right" size="medium" className="hidden md:block" />
+      <Lion position="left" size="small" className="block md:hidden" />
+
+      {/* Thêm trống lân */}
+      <LanternDrum
+        position="center"
+        bottom="5%"
+        size={120}
+        className="hidden md:block"
+      />
+      <LanternDrum
+        position="right"
+        bottom="15%"
+        size={80}
+        className="block md:hidden"
+      />
+
+      {/* Thêm trang trí phụ */}
+      <MidAutumnDecoration />
 
       <header className="bg-midautumn-red-600 text-white py-6 px-4 shadow-md relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 pointer-events-none">
@@ -145,6 +211,13 @@ function App() {
               Phần Thưởng Có Sẵn
             </h2>
 
+            {viewMode === "wheel" && (
+              <CodeInput
+                onValidate={validateCode}
+                hasValidCode={hasValidCode}
+              />
+            )}
+
             {viewMode === "grid" ? (
               <PrizeGrid
                 prizes={prizes}
@@ -156,6 +229,8 @@ function App() {
                 prizes={prizes}
                 onSelectPrize={handleSelectPrize}
                 selectedPrize={selectedPrize}
+                hasValidCode={hasValidCode}
+                onSpin={handleSpin}
               />
             )}
           </div>
@@ -174,6 +249,11 @@ function App() {
         isVisible={showToast}
         onClose={handleCloseToast}
       />
+
+      {/* Hiển thị danh sách giải thưởng đã trúng */}
+      <div className="container mx-auto px-4 pb-16">
+        <WonPrizesList wonPrizes={wonPrizes} />
+      </div>
     </div>
   );
 }

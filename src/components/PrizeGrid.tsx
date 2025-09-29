@@ -23,6 +23,7 @@ const PrizeGrid: React.FC<PrizeGridProps> = ({
 
   const { focusedIndex } = useKeyboardNavigation({
     itemCount: prizes.length,
+
     onSelect: (index) => {
       onSelectPrize(prizes[index]);
     },

@@ -6,6 +6,7 @@ export interface Prize {
   description: string;
   image: string;
   rarity: Rarity;
+  value: string;
 }
 
 export const prizes: Prize[] = [
@@ -15,6 +16,7 @@ export const prizes: Prize[] = [
     description: "Combo trà, bánh trung thu, lồng đèn",
     image: "/assets/combo.png",
     rarity: "Legendary",
+    value: "221.000đ",
   },
   {
     id: "p2",
@@ -22,6 +24,7 @@ export const prizes: Prize[] = [
     description: "Balo",
     image: "/assets/balo.png",
     rarity: "Epic",
+    value: "155.000đ",
   },
   {
     id: "p3",
@@ -29,6 +32,7 @@ export const prizes: Prize[] = [
     description: "Thỏ mặt trăng",
     image: "/assets/tho.png",
     rarity: "Rare",
+    value: "112.000đ",
   },
   {
     id: "p4",
@@ -36,6 +40,7 @@ export const prizes: Prize[] = [
     description: "Kẹo mút",
     image: "/assets/keo-mut.png",
     rarity: "Common",
+    value: "111.000đ",
   },
   // {
   //   id: 'p5',

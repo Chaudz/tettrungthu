@@ -7,9 +7,16 @@ interface SpinWheelProps {
   prizes: Prize[];
   onSelectPrize: (prize: Prize) => void;
   selectedPrize: Prize | null;
+  hasValidCode: boolean;
+  onSpin?: (prize: Prize) => void;
 }
 
-const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
+const SpinWheel: React.FC<SpinWheelProps> = ({
+  prizes,
+  onSelectPrize,
+  hasValidCode,
+  onSpin,
+}) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [winner, setWinner] = useState<Prize | null>(null);
@@ -44,32 +51,59 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
     }
   }, [isSpinning]);
 
+  // Tạo hàm xác định phần tử trúng thưởng dựa trên góc quay cuối cùng
+  const determineWinnerIndex = (finalAngle: number) => {
+    // Chuẩn hóa góc về 0-360 độ
+    const normalizedAngle = finalAngle % 360;
+
+    // Tính kích thước của mỗi phần tử
+    const segmentSize = 360 / prizes.length;
+
+    // Xác định phần tử nào đang ở vị trí kim chỉ (0 độ)
+    // Lưu ý: Vì vòng quay quay theo chiều kim đồng hồ nên cần điều chỉnh
+    // Vị trí 0 độ (phía trên) ứng với 270 độ trong hệ tọa độ SVG
+    const winnerIndex = Math.floor(
+      ((360 - normalizedAngle + 270) % 360) / segmentSize
+    );
+
+    return winnerIndex % prizes.length;
+  };
+
   const spinWheel = () => {
-    if (isSpinning) return;
+    if (isSpinning || !hasValidCode) return;
 
     setIsSpinning(true);
     setShowStars(true);
     spinSound.play();
 
-    // Chọn ngẫu nhiên một giải thưởng
-    const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+    // Tính số vòng quay cố định (5 vòng)
+    const baseRotation = 1800;
 
-    // Tính góc cho giải thưởng được chọn
-    const prizeIndex = prizes.findIndex((p) => p.id === randomPrize.id);
-    const segmentAngle = 360 / prizes.length;
-    const prizeAngle = segmentAngle * prizeIndex;
+    // Thêm một góc ngẫu nhiên từ 0-360 độ
+    const randomAngle = Math.random() * 360;
 
-    // Tính góc quay (5-10 vòng + góc đến giải thưởng)
-    const spinRotation = 1800 + 360 - prizeAngle;
+    // Tổng góc quay
+    const totalRotation = baseRotation + randomAngle;
 
     // Thiết lập góc quay mới
-    setRotation((prev) => prev + spinRotation);
+    setRotation((prev) => prev + totalRotation);
 
-    // Sau khi quay xong, chọn giải thưởng
+    // Xác định phần tử trúng thưởng dựa trên góc quay cuối cùng
+    const finalAngle = (rotation + totalRotation) % 360;
+    const winnerIndex = determineWinnerIndex(finalAngle);
+    const winningPrize = prizes[winnerIndex];
+
+    // Sau khi quay xong, hiển thị giải thưởng đã chọn
     setTimeout(() => {
       winSound.play();
-      setWinner(randomPrize);
-      onSelectPrize(randomPrize);
+      setWinner(winningPrize);
+      onSelectPrize(winningPrize);
+
+      // Gọi callback onSpin nếu có
+      if (onSpin) {
+        onSpin(winningPrize);
+      }
+
       setIsSpinning(false);
     }, 5000);
   };
@@ -135,7 +169,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-2 bg-midautumn-red-600"></div>
         </div>
       </motion.div>
-      <div className="relative w-64 h-64 md:w-96 md:h-96 mb-6">
+      <div className="relative w-[280px] h-[280px] sm:w-[320px] sm:h-[320px] md:w-96 md:h-96 mb-6">
         {/* Hiệu ứng ngôi sao xung quanh */}
         <AnimatePresence>
           {showStars &&
@@ -277,9 +311,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
         </motion.div>
 
         {/* Nút giữa */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-midautumn-gold-600 flex items-center justify-center shadow-lg z-10">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 rounded-full bg-midautumn-gold-600 flex items-center justify-center shadow-lg z-10">
           <motion.div
-            className="w-12 h-12 rounded-full bg-midautumn-gold-500 flex items-center justify-center shadow-inner"
+            className="w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-midautumn-gold-500 flex items-center justify-center shadow-inner"
             animate={{
               boxShadow: isSpinning
                 ? [
@@ -295,9 +329,9 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
               repeatType: "reverse",
             }}
           >
-            <div className="w-8 h-8 rounded-full bg-midautumn-gold-700 flex items-center justify-center shadow-inner">
+            <div className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 rounded-full bg-midautumn-gold-700 flex items-center justify-center shadow-inner">
               <motion.div
-                className="w-4 h-4 rounded-full bg-midautumn-gold-800"
+                className="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4 rounded-full bg-midautumn-gold-800"
                 animate={{
                   scale: isSpinning ? [1, 1.2, 1] : 1,
                   backgroundColor: isSpinning
@@ -317,21 +351,23 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
 
       <motion.button
         onClick={spinWheel}
-        disabled={isSpinning}
-        className={`px-8 py-4 rounded-full text-white font-bold text-lg transition-all ${
+        disabled={isSpinning || !hasValidCode}
+        className={`px-6 py-3 sm:px-7 sm:py-3.5 md:px-8 md:py-4 rounded-full text-white font-bold text-base sm:text-lg transition-all ${
           isSpinning
             ? "bg-gray-400 cursor-not-allowed"
+            : !hasValidCode
+            ? "bg-gray-500 cursor-not-allowed"
             : "bg-midautumn-gold-600 hover:bg-midautumn-gold-500 hover:shadow-lg"
         }`}
         whileHover={
-          !isSpinning
+          !isSpinning && hasValidCode
             ? {
                 scale: 1.05,
                 boxShadow: "0 10px 25px -5px rgba(240, 181, 0, 0.4)",
               }
             : {}
         }
-        whileTap={!isSpinning ? { scale: 0.95 } : {}}
+        whileTap={!isSpinning && hasValidCode ? { scale: 0.95 } : {}}
         animate={
           isSpinning
             ? {
@@ -351,12 +387,16 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
           },
         }}
       >
-        {isSpinning ? "Đang quay..." : "Quay ngay!"}
+        {isSpinning
+          ? "Đang quay..."
+          : !hasValidCode
+          ? "Nhập mã để quay"
+          : "Quay ngay!"}
       </motion.button>
 
       {winner && !isSpinning && (
         <motion.div
-          className="mt-6 text-center p-4 rounded-xl bg-moon-pastel-700/50 backdrop-blur-sm border border-midautumn-gold-500/30"
+          className="mt-4 sm:mt-5 md:mt-6 text-center p-3 sm:p-3.5 md:p-4 rounded-xl bg-moon-pastel-700/50 backdrop-blur-sm border border-midautumn-gold-500/30"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -376,7 +416,7 @@ const SpinWheel: React.FC<SpinWheelProps> = ({ prizes, onSelectPrize }) => {
               repeatType: "reverse",
             }}
           />
-          <p className="text-lg font-medium">
+          <p className="text-base sm:text-lg font-medium">
             Giải thưởng của bạn:{" "}
             <span className="font-bold text-midautumn-gold-400">
               {winner.title}

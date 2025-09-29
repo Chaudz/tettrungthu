@@ -9,6 +9,7 @@ interface LanternProps {
   left: string;
   top?: string;
   bottom?: string;
+  className?: string;
 }
 
 const Lantern: React.FC<LanternProps> = ({
@@ -19,10 +20,11 @@ const Lantern: React.FC<LanternProps> = ({
   left,
   top,
   bottom,
+  className = "",
 }) => {
   return (
     <motion.div
-      className="absolute z-10 pointer-events-none"
+      className={`absolute z-10 pointer-events-none ${className}`}
       style={{
         left,
         top: top || undefined,

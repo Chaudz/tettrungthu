@@ -88,7 +88,7 @@ const PrizeModal: React.FC<PrizeModalProps> = ({
           )}
 
           <motion.div
-            className="modal-content bg-moon-pastel-700 text-gray-100"
+            className="modal-content bg-moon-pastel-700 text-gray-100 w-[90%] max-w-md mx-auto p-4 sm:p-6"
             onClick={(e) => e.stopPropagation()}
             variants={modalVariants}
             initial="hidden"
@@ -125,8 +125,8 @@ const PrizeModal: React.FC<PrizeModalProps> = ({
               </button>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-center mb-6">
-              <div className="w-40 h-40 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0">
+            <div className="flex flex-col sm:flex-row items-center mb-4 sm:mb-6">
+              <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 mb-4 sm:mb-0 sm:mr-6 flex-shrink-0">
                 <img
                   src={prize.image}
                   alt={prize.title}
@@ -135,46 +135,73 @@ const PrizeModal: React.FC<PrizeModalProps> = ({
               </div>
 
               <div>
-                <h3 className="text-xl font-bold mb-2">{prize.title}</h3>
-                <p className="text-gray-300 mb-3">{prize.description}</p>
-                <div
-                  className="inline-block px-3 py-1 rounded-full text-sm font-medium mb-2"
-                  style={{
-                    backgroundColor:
-                      prize.rarity === "Legendary"
-                        ? "#fff8c2"
-                        : prize.rarity === "Epic"
-                        ? "#f3e8ff"
-                        : prize.rarity === "Rare"
-                        ? "#dbeafe"
-                        : "#f3f4f6",
-                    color:
-                      prize.rarity === "Legendary"
-                        ? "#854d0e"
-                        : prize.rarity === "Epic"
-                        ? "#6b21a8"
-                        : prize.rarity === "Rare"
-                        ? "#1e40af"
-                        : "#4b5563",
-                  }}
-                >
-                  {prize.rarity}
+                <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+                  {prize.title}
+                </h3>
+                <p className="text-gray-300 text-sm sm:text-base mb-2 sm:mb-3">
+                  {prize.description}
+                </p>
+                <div className="flex items-center gap-2 mb-2">
+                  <div
+                    className="inline-block px-3 py-1 rounded-full text-sm font-medium"
+                    style={{
+                      backgroundColor:
+                        prize.rarity === "Legendary"
+                          ? "#fff8c2"
+                          : prize.rarity === "Epic"
+                          ? "#f3e8ff"
+                          : prize.rarity === "Rare"
+                          ? "#dbeafe"
+                          : "#f3f4f6",
+                      color:
+                        prize.rarity === "Legendary"
+                          ? "#854d0e"
+                          : prize.rarity === "Epic"
+                          ? "#6b21a8"
+                          : prize.rarity === "Rare"
+                          ? "#1e40af"
+                          : "#4b5563",
+                    }}
+                  >
+                    {prize.rarity}
+                  </div>
+                  <motion.div
+                    className="text-base font-bold px-3 py-1.5 bg-gradient-to-r from-midautumn-gold-600 to-midautumn-gold-400 text-black rounded-md shadow-lg"
+                    initial={{ scale: 1 }}
+                    animate={{
+                      scale: [1, 1.05, 1],
+                      boxShadow: [
+                        "0 0 0 rgba(255, 215, 0, 0)",
+                        "0 0 15px rgba(255, 215, 0, 0.7)",
+                        "0 0 0 rgba(255, 215, 0, 0)",
+                      ],
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                    }}
+                  >
+                    Trị giá: {prize.value}
+                  </motion.div>
                 </div>
               </div>
             </div>
 
             <div className="text-center mb-4">
-              <p className="text-lg">
+              <p className="text-base sm:text-lg">
                 Bạn có chắc chắn muốn chọn phần thưởng này?
               </p>
             </div>
 
-            <div className="flex justify-center space-x-4">
-              <button className="btn btn-secondary" onClick={onClose}>
+            <div className="flex justify-center space-x-3 sm:space-x-4">
+              <button
+                className="btn btn-secondary text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2"
+                onClick={onClose}
+              >
                 Hủy bỏ
               </button>
               <motion.button
-                className="btn btn-primary"
+                className="btn btn-primary text-sm sm:text-base px-3 py-1.5 sm:px-4 sm:py-2"
                 onClick={handleConfirm}
                 whileTap={{ scale: 0.95 }}
                 whileHover={{

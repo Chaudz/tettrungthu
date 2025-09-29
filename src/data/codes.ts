@@ -1,0 +1,8 @@
+// Danh sách mã code hợp lệ
+export const validCodes = [
+  "NGANTRUNGTHUVUI",
+  "DENTETTRUNGTHUVUI",
+  "MALANHTHANGNGUYENDAO",
+  "HOATETTHIEUNHI",
+  "BAMINHVUILONGTRONGTRANG",
+];

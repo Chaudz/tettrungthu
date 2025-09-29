@@ -5,20 +5,20 @@ import clsx from "clsx";
 
 interface PrizeCardProps {
   prize: Prize;
-  onSelect: (prize: Prize) => void;
-  isSelected: boolean;
-  isFocused: boolean;
-  previouslySelected: boolean;
+  onSelect?: (prize: Prize) => void;
+  isSelected?: boolean;
+  isFocused?: boolean;
+  previouslySelected?: boolean;
 }
 
 const PrizeCard: React.FC<PrizeCardProps> = ({
   prize,
   onSelect,
-  isSelected,
-  isFocused,
-  previouslySelected,
+  isSelected = false,
+  isFocused = false,
+  previouslySelected = false,
 }) => {
-  const { title, description, image, rarity } = prize;
+  const { title, description, image, rarity, value } = prize;
 
   const rarityClasses = {
     Common: "",
@@ -43,15 +43,8 @@ const PrizeCard: React.FC<PrizeCardProps> = ({
         isFocused && "ring-2 ring-midautumn-red-300"
       )}
       whileHover={{ scale: 1.03, y: -6 }}
-      whileTap={{ scale: 0.98 }}
+      // onClick={() => onSelect && onSelect(prize)}
       tabIndex={0}
-      onClick={() => onSelect(prize)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelect(prize);
-        }
-      }}
     >
       {rarity === "Legendary" && <div className="legendary-shimmer" />}
 
@@ -115,17 +108,23 @@ const PrizeCard: React.FC<PrizeCardProps> = ({
         >
           {rarity}
         </span>
-
-        <button
-          className="btn btn-primary text-sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect(prize);
+        <motion.span
+          className="text-sm font-bold px-2 py-1 bg-gradient-to-r from-midautumn-gold-600 to-midautumn-gold-400 text-black rounded-md shadow-lg"
+          whileHover={{ scale: 1.05, y: -2 }}
+          whileTap={{ scale: 0.95 }}
+          animate={{
+            boxShadow: [
+              "0 0 0 rgba(255, 215, 0, 0)",
+              "0 0 10px rgba(255, 215, 0, 0.7)",
+              "0 0 0 rgba(255, 215, 0, 0)",
+            ],
           }}
-          aria-label={`Chọn ${title}`}
+          transition={{
+            boxShadow: { repeat: Infinity, duration: 2 },
+          }}
         >
-          Chọn
-        </button>
+          {value}
+        </motion.span>
       </div>
     </motion.div>
   );

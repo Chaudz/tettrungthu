@@ -5,16 +5,18 @@ interface MoonProps {
   size?: number;
   top?: string;
   right?: string;
+  className?: string;
 }
 
 const Moon: React.FC<MoonProps> = ({
   size = 120,
   top = "40px",
   right = "40px",
+  className = "",
 }) => {
   return (
     <motion.div
-      className="absolute z-0 pointer-events-none"
+      className={`absolute z-0 pointer-events-none ${className}`}
       style={{
         top,
         right,

@@ -69,11 +69,14 @@ function App() {
 
   // Xử lý khi người dùng nhấn nút phát nhạc trong modal chào mừng
   const handleStartMusic = () => {
-    setMusicEnabled(true);
-    // Gọi phương thức play từ audioPlayerRef
-    audioPlayerRef.current.play().catch((error) => {
-      console.error("Không thể phát nhạc:", error);
-    });
+    // Đánh dấu rằng nhạc đã được bật
+    if (!musicEnabled) {
+      setMusicEnabled(true);
+      // Gọi phương thức play từ audioPlayerRef
+      audioPlayerRef.current.play().catch((error) => {
+        console.error("Không thể phát nhạc:", error);
+      });
+    }
   };
 
   return (

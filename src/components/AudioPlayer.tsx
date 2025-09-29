@@ -40,15 +40,29 @@ const AudioPlayer = forwardRef<AudioPlayerRef, AudioPlayerProps>(
     // Cung cấp các phương thức cho ref
     useImperativeHandle(ref, () => ({
       play: () => {
-        const playPromise = play();
-        setIsPlaying(true);
-        return playPromise;
+        // Chỉ phát nhạc nếu chưa đang phát
+        if (!isPlaying) {
+          const playPromise = play();
+          setIsPlaying(true);
+          // Hiển thị thông báo
+          setShowNotification(true);
+          // Ẩn thông báo sau 5 giây
+          setTimeout(() => {
+            setShowNotification(false);
+          }, 2000);
+          return playPromise;
+        }
+        return Promise.resolve();
       },
     }));
 
-    // Tự động phát nhạc khi component được tải
+    // Tự động phát nhạc khi component được tải hoặc khi autoPlay thay đổi từ false sang true
+    const [hasAutoPlayed, setHasAutoPlayed] = useState(false);
+
     useEffect(() => {
-      if (autoPlay) {
+      // Chỉ phát nhạc tự động nếu autoPlay = true và chưa từng phát tự động trước đó
+      if (autoPlay && !hasAutoPlayed) {
+        setHasAutoPlayed(true);
         play()
           .then(() => {
             setIsPlaying(true);
@@ -63,7 +77,7 @@ const AudioPlayer = forwardRef<AudioPlayerRef, AudioPlayerProps>(
             console.error("Không thể tự động phát nhạc:", error);
           });
       }
-    }, [autoPlay, play]);
+    }, [autoPlay, play, hasAutoPlayed]);
 
     const togglePlay = () => {
       if (isPlaying) {

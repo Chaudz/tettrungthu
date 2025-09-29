@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { prizes } from "./data/prizes";
 import type { Prize } from "./data/prizes";
 import PrizeGrid from "./components/PrizeGrid";
@@ -14,6 +14,8 @@ import WonPrizesList from "./components/WonPrizesList";
 import Lion from "./components/Lion";
 import LanternDrum from "./components/LanternDrum";
 import MidAutumnDecoration from "./components/MidAutumnDecoration";
+import AudioPlayer from "./components/AudioPlayer";
+import WelcomeModal from "./components/WelcomeModal";
 import { usePrizeTracking } from "./hooks/usePrizeTracking";
 import { motion } from "framer-motion";
 
@@ -23,6 +25,13 @@ function App() {
   const [toastMessage, setToastMessage] = useState("");
   const [showToast, setShowToast] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "wheel">("grid");
+  const [showWelcomeModal, setShowWelcomeModal] = useState(true);
+  const [musicEnabled, setMusicEnabled] = useState(false);
+
+  // Tham chiếu đến phương thức play của AudioPlayer
+  const audioPlayerRef = useRef<{ play: () => Promise<void> }>({
+    play: () => Promise.resolve(),
+  });
 
   // Sử dụng hook quản lý mã code và giải thưởng
   const { validateCode, hasValidCode, addWonPrize, currentCode, wonPrizes } =
@@ -56,6 +65,15 @@ function App() {
 
   const handleCloseToast = () => {
     setShowToast(false);
+  };
+
+  // Xử lý khi người dùng nhấn nút phát nhạc trong modal chào mừng
+  const handleStartMusic = () => {
+    setMusicEnabled(true);
+    // Gọi phương thức play từ audioPlayerRef
+    audioPlayerRef.current.play().catch((error) => {
+      console.error("Không thể phát nhạc:", error);
+    });
   };
 
   return (
@@ -254,6 +272,25 @@ function App() {
       <div className="container mx-auto px-4 pb-16">
         <WonPrizesList wonPrizes={wonPrizes} />
       </div>
+
+      {/* Thêm modal chào mừng */}
+      <WelcomeModal
+        isOpen={showWelcomeModal}
+        onClose={() => setShowWelcomeModal(false)}
+        onStartMusic={handleStartMusic}
+      />
+
+      {/* Thêm trình phát nhạc */}
+      <AudioPlayer
+        audioUrl="/sounds/nhactrungthu.mp3"
+        initialVolume={0.3}
+        autoPlay={musicEnabled}
+        ref={(player: { play: () => Promise<void> }) => {
+          if (player) {
+            audioPlayerRef.current = player;
+          }
+        }}
+      />
     </div>
   );
 }

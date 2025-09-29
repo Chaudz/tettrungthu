@@ -5,7 +5,6 @@ import clsx from "clsx";
 
 interface PrizeCardProps {
   prize: Prize;
-  onSelect?: (prize: Prize) => void;
   isSelected?: boolean;
   isFocused?: boolean;
   previouslySelected?: boolean;
@@ -13,7 +12,6 @@ interface PrizeCardProps {
 
 const PrizeCard: React.FC<PrizeCardProps> = ({
   prize,
-  onSelect,
   isSelected = false,
   isFocused = false,
   previouslySelected = false,

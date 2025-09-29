@@ -25,14 +25,22 @@ export const useSound = (soundUrl: string, options: SoundOptions = {}) => {
     };
   }, [soundUrl, volume, loop]);
 
-  const play = () => {
-    if (audioRef.current) {
-      // Đặt lại thời gian phát về đầu nếu đang phát
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch((error) => {
-        console.error("Không thể phát âm thanh:", error);
-      });
-    }
+  const play = (): Promise<void> => {
+    return new Promise<void>((resolve, reject) => {
+      if (audioRef.current) {
+        // Đặt lại thời gian phát về đầu nếu đang phát
+        audioRef.current.currentTime = 0;
+        audioRef.current
+          .play()
+          .then(() => resolve())
+          .catch((error) => {
+            console.error("Không thể phát âm thanh:", error);
+            reject(error);
+          });
+      } else {
+        resolve(); // Resolve nếu không có audio ref
+      }
+    });
   };
 
   const stop = () => {

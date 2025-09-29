@@ -56,7 +56,6 @@ const PrizeGrid: React.FC<PrizeGridProps> = ({
         <motion.div key={prize.id} variants={item}>
           <PrizeCard
             prize={prize}
-            onSelect={onSelectPrize}
             isSelected={selectedPrize?.id === prize.id}
             isFocused={focusedIndex === index}
             previouslySelected={previouslySelectedId === prize.id}
